@@ -1,6 +1,6 @@
 'use strict';
 
-var numPics = 25;
+var NUMPICS = 25;
 var pictures = [];
 
 var comments = [
