@@ -22,12 +22,13 @@ var descriptions = [
 ];
 /**
  * Генерация комментариев
+ * @param {number} maxComments Максимальное число комментариев
  * @return {Array} Список комментариев
+ *
  */
 var generateComments = function (maxComments) {
   var commentsArr = [];
   var maxCountComments = Math.ceil(Math.random() * maxComments);
-  //commentsArr.length = Math.floor(Math.random() * MAX_COMMENTS_IN_PICS);
   for (var i = 0; i < maxCountComments; i++) {
     commentsArr[i] = comments[Math.floor(Math.random() * comments.length)];
   }
@@ -109,9 +110,9 @@ var renderComment = function (commentData) {
 var commentsContainer = document.querySelector('.social__comments');
 commentsContainer.innerHTML = '';
 
-var renderComments = function (comments) {
+var renderComments = function (comm) {
   var fragmentComments = document.createDocumentFragment();
-  comments.forEach(function (comment) {
+  comm.forEach(function (comment) {
     fragmentComments.appendChild(renderComment(comment));
   });
   commentsContainer.appendChild(fragmentComments);
