@@ -37,9 +37,9 @@ var generateComments = function (maxComments) {
 
 /**
  * Генерация объекта с фотографией и данными
- * @param {number} idPicture номер фотографии в папке,
- * @param {number} maxComments максимальное число комментариев
- * @return
+ * @param {number} idPicture Номер фотографии
+ * @param {number} maxComments Максимальное число комментариев
+ * @return {{id: number, url: string, likes: number, comments: Array, description: string}}
  */
 var generatePic = function (idPicture, maxComments) {
   return {
