@@ -50,6 +50,8 @@ textHashtag.addEventListener('input', checkValidity);
 
 /**
  * Поиск повторяющихся тегов
+ * @param {array} valuesArray Массив тегов
+ * @return {boolean} isRepeatedValue Наличие повторяющихся тегов
  */
 function sortArray(valuesArray) {
   var isRepeatedValue = false;
@@ -67,7 +69,7 @@ function sortArray(valuesArray) {
 
 /**
  * Валидация хэш-тегов
- * @param evt событие (ввод тегов)
+ * @param {string} evt событие (ввод тегов)
  */
 function checkValidity(evt) {
   var target = evt.target;
@@ -125,8 +127,8 @@ var generatePics = function (count) {
 
 /**
  * Генерация вставки из шаблона
- * @param picData объект с фотографией и данными к ней
- * @returns {Node}
+ * @param {object} picData объект с фотографией и данными к ней
+ * @return {Node} picture Нода
  */
 var renderPic = function (picData) {
   var pictureTemplate = document.querySelector('#picture')
@@ -187,11 +189,11 @@ commentsContainer.innerHTML = '';
 
 /**
  * Отрисовка комментариев для большой фотографии
- * @param {string} comments массив комментариев для каждой фотографии
+ * @param {string} commentaries массив комментариев для каждой фотографии
  */
-var renderComments = function (comments) {
+var renderComments = function (commentaries) {
   var fragmentComments = document.createDocumentFragment();
-  comments.forEach(function (comment) {
+  commentaries.forEach(function (comment) {
     fragmentComments.appendChild(renderComment(comment));
   });
   commentsContainer.appendChild(fragmentComments);
@@ -213,7 +215,7 @@ imgUploadPreview.classList.remove('img-upload__preview');
 
 /**
  * Добавление эффектов к фотографиям
- * @param evt Событие (клик по иконке фильтра)
+ * @param {string} evt Событие (клик по иконке фильтра)
  */
 var onPreviewClick = function (evt) {
   var target = evt.target;
@@ -280,8 +282,6 @@ var bigPictureCancelButton = document.querySelector('.big-picture__cancel');
 bigPictureCancelButton.addEventListener('click', function () {
   bigPicture.classList.add('hidden');
 });
-var scaleControlSmaller = document.querySelector('.scale__control--smaller');
-var scaleControlBigger = document.querySelector('.scale__control--bigger');
 var scaleControlValue = document.querySelector('.scale__control--value');
 
 /**
@@ -290,21 +290,20 @@ var scaleControlValue = document.querySelector('.scale__control--value');
  */
 var value = MAX_VALUE;
 var onScaleClick = function (evt) {
-  var target = evt.target;
   if (evt.target.classList.contains('scale__control--smaller')) {
     value = value - JUMP_VALUE;
     if (value < MIN_VALUE) {
       value = MIN_VALUE;
     }
-    setScaleValue()
+    setScaleValue();
   } else if (evt.target.classList.contains('scale__control--bigger')) {
     value = value + JUMP_VALUE;
     if (value > MAX_VALUE) {
       value = MAX_VALUE;
     }
-    setScaleValue()
+    setScaleValue();
   }
-}
+};
 
 var imgUploadScale = document.querySelector('.img-upload__scale');
 imgUploadScale.addEventListener('click', onScaleClick);
@@ -312,20 +311,22 @@ imgUploadScale.addEventListener('click', onScaleClick);
 /**
  * Формирование значения зума
  */
-var setScaleValue = function() {
+var setScaleValue = function () {
   scaleControlValue.value = value + '%';
   imgUploadPreview.style.transform = 'scale(' + value / DEFAULT_SCALE + ')';
-}
+};
 
 /**
  * Показ большой фотографии
- * @param evt Событие (клик на миниатюре)
+ * @param {string} evt Событие (клик на миниатюре)
  */
 var onImageClick = function (evt) {
   var target = evt.target;
   if (evt.target.classList.contains('picture__img')) {
     bigPicture.classList.remove('hidden');
-    bigPicture.querySelectorAll('.social__comment').forEach(e => e.parentNode.removeChild(e));
+    bigPicture.querySelectorAll('.social__comment').forEach(function (e) {
+      e.parentNode.removeChild(e);
+    });
     bigPicture.querySelector('.big-picture__img img').src = target.getAttribute('src');
     bigPicture.querySelector('.likes-count').textContent = picsData[target.id].likes;
     bigPicture.querySelector('.comments-count').textContent = picsData[target.id].comments.length;
