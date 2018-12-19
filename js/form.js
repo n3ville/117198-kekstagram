@@ -367,7 +367,7 @@
     messageButton.addEventListener('click', closeElement);
     document.addEventListener('click', closeElement);
     document.addEventListener('keyup', closeElement);
-  }
+  };
 
   var onLoad = function () {
     templateStatus('success');
@@ -375,11 +375,11 @@
     uploadFile.value = '';
     textHashtag.value = '';
     textDescription.value = '';
-  }
+  };
 
   var onError = function () {
     templateStatus('error');
-  }
+  };
   document.querySelector('.img-upload__form').addEventListener('submit', function (evt) {
     window.backend.save(new FormData(form), onLoad, onError);
     img.classList.add('hidden');
