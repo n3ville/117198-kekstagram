@@ -1,8 +1,5 @@
 'use strict';
 (function () {
-  var MAX_COMMENTS_IN_PICS = 10;
-  var MIN_LIKES = 15;
-  var MAX_LIKES = 185;
 
   var comments = [
     'Всё отлично!',
@@ -47,7 +44,7 @@
     return {
       id: idPicture,
       url: 'photos/' + idPicture + '.jpg',
-      likes: Math.floor(Math.random() * MAX_LIKES) + MIN_LIKES,
+      likes: Math.floor(Math.random() * window.constant.MAX_LIKES) + window.constant.MIN_LIKES,
       comments: generateComments(maxComments),
       description: descriptions[Math.floor(Math.random() * (descriptions.length - 1))]
     };
@@ -61,25 +58,8 @@
   window.generatePics = function (count) {
     var pics = [];
     for (var i = 1; i <= count; i++) {
-      pics[i] = generatePic(i, MAX_COMMENTS_IN_PICS);
+      pics[i] = generatePic(i, window.constant.MAX_COMMENTS_IN_PICS);
     }
     return pics;
-  };
-
-  /**
-   * Генерация вставки из шаблона
-   * @param {object} picData объект с фотографией и данными к ней
-   * @return {Node} picture Нода
-   */
-  window.renderPic = function (picData) {
-    var pictureTemplate = document.querySelector('#picture')
-      .content
-      .querySelector('.picture');
-    var picture = pictureTemplate.cloneNode(true);
-    picture.querySelector('.picture__img').src = picData.url;
-    picture.querySelector('.picture__img').id = picData.id;
-    picture.querySelector('.picture__likes').textContent = picData.likes;
-    picture.querySelector('.picture__comments').textContent = picData.comments.length;
-    return picture;
   };
 })();
