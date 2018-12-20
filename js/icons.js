@@ -5,7 +5,7 @@
    * @param {object} picData объект с фотографией и данными к ней
    * @return {Node} picture Нода
    */
-  window.renderPic = function (picData) {
+  var renderPic = function (picData) {
     var pictureTemplate = document.querySelector('#picture')
       .content
       .querySelector('.picture');
@@ -22,11 +22,11 @@
    * Вставка миниатюр на страницу
    * @param {Array} pics массив миниатюр
    */
-  window.renderPicsIntoDOM = function (pics) {
+  var renderPicsIntoDOM = function (pics) {
     var fragmentPictures = document.createDocumentFragment();
     var pictureContainer = document.querySelector('.pictures');
     pics.forEach(function (pic) {
-      fragmentPictures.appendChild(window.renderPic(pic));
+      fragmentPictures.appendChild(renderPic(pic));
     });
     pictureContainer.appendChild(fragmentPictures);
   };
@@ -47,14 +47,24 @@
     for (var i = 0; i < data.length; i++) {
       window.picsData[i]['id'] = i;
     }
-    window.renderPicsIntoDOM(window.picsData);
+    renderPicsIntoDOM(window.picsData);
   };
   /**
    * Функция, которая выводит ошибку при загрузке данных
    * @param {string} Ошибка
    */
   var onError = function () {
+    var errorMessage = document.createElement('div');
+    errorMessage.style.position = 'absolute';
+    errorMessage.style.left = 0;
+    errorMessage.style.right = 0;
+    errorMessage.style.fontSize = '10px';
+    errorMessage.id = 'msg';
+    errorMessage.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
+    errorMessage.textContent = 'Ошибка загрузки данных!';
+    document.body.insertAdjacentElement('afterbegin', errorMessage);
   };
+
   window.backend.load(onLoad, onError);
 
   var imgFilters = document.querySelector('.img-filters');
@@ -71,7 +81,7 @@
     });
   };
 
-  var onFilterClick = function (evt) {
+  var filterClickHandler = function (evt) {
     var picture = document.querySelector('.pictures');
     var pictures = picture.querySelectorAll('.picture');
     pictures.forEach(function (item) {
@@ -80,23 +90,23 @@
     var target = evt.target;
     if (target.id === 'filter-popular') {
       window.debounce(function () {
-        window.renderPicsIntoDOM(window.picsData);
+        renderPicsIntoDOM(window.picsData);
       });
       return;
     } else if (target.id === 'filter-new') {
       window.debounce(function () {
-        window.renderPicsIntoDOM(window.picsDataCopy);
+        renderPicsIntoDOM(window.picsDataCopy);
       });
       return;
     }
     window.debounce(function () {
-      window.renderPicsIntoDOM(sortComments(window.picsData));
+      renderPicsIntoDOM(sortComments(window.picsData));
     });
   };
 
   var filterButton = imgFilters.querySelectorAll('.img-filters__button');
   filterButton.forEach(function (button) {
-    button.addEventListener('click', onFilterClick);
+    button.addEventListener('click', filterClickHandler);
     button.classList.remove('img-filters__button--active');
   });
 
@@ -112,11 +122,11 @@
     highlight(target);
   };
 
-  function highlight(node) {
+  var highlight = function (node) {
     if (selectedButton) {
       selectedButton.classList.remove('img-filters__button--active');
     }
     selectedButton = node;
     selectedButton.classList.add('img-filters__button--active');
-  }
+  };
 })();

@@ -1,5 +1,8 @@
 'use strict';
 (function () {
+  var MAX_AVATARS = 6;
+  var PICTURE_HEIGHT = 35;
+  var MAX_COMMENTS = 5;
 
   /**
    * Отрисовка комментария для большой фотографии
@@ -11,9 +14,9 @@
     socialComment.classList.add('social__comment');
     var socialPicture = document.createElement('img');
     socialPicture.classList.add('social__picture');
-    socialPicture.src = 'img/avatar-' + Math.ceil(Math.random() * window.constant.MAX_AVATARS) + '.svg';
+    socialPicture.src = 'img/avatar-' + Math.ceil(Math.random() * MAX_AVATARS) + '.svg';
     socialPicture.alt = 'Аватар комментатора фотографии';
-    socialPicture.width = socialPicture.height = window.constant.PICTURE_HEIGHT;
+    socialPicture.width = socialPicture.height = PICTURE_HEIGHT;
     socialComment.appendChild(socialPicture);
     var socialText = document.createElement('p');
     socialText.classList.add('social__text');
@@ -31,9 +34,9 @@
    */
   var renderComments = function (commentaries) {
     var fragmentComments = document.createDocumentFragment();
-    for (var i = 0; i < commentaries.length; i++) {
-      fragmentComments.appendChild(renderComment(commentaries[i].message));
-    }
+    commentaries.forEach(function (comment) {
+      fragmentComments.appendChild(renderComment(comment.message));
+    });
     commentsContainer.appendChild(fragmentComments);
   };
 
@@ -60,7 +63,7 @@
    * Показ большой фотографии
    * @param {string} evt Событие (клик на миниатюре)
    */
-  var onImageClick = function (evt) {
+  var imageClickHandler = function (evt) {
     var target = evt.target;
     if (target.classList.contains('picture__img')) {
       bigPicture.classList.remove('hidden');
@@ -71,7 +74,7 @@
       bigPicture.querySelector('.likes-count').textContent = window.picsData[target.id].likes;
       bigPicture.querySelector('.comments-count').textContent = window.picsData[target.id].comments.length;
       bigPicture.querySelector('.social__caption').textContent = window.picsData[target.id].description;
-      renderComments((window.picsData[target.id].comments).slice(0, window.constant.MAX_COMMENTS));
+      renderComments((window.picsData[target.id].comments).slice(0, MAX_COMMENTS));
     }
   };
 
@@ -79,9 +82,8 @@
    * Показ большой фотографии
    * @param {string} evt Событие (нажатие клавиши)
    */
-  var onImageKey = function (evt) {
+  var imageKeydownHandler = function (evt) {
     var target = evt.target;
-
     if (evt.keyCode === window.constant.ENTER_CODE) {
       bigPicture.classList.remove('hidden');
       bigPicture.querySelectorAll('.social__comments').forEach(function (evnt) {
@@ -91,11 +93,11 @@
       bigPicture.querySelector('.likes-count').textContent = window.picsData[target.childNodes[1].id].likes;
       bigPicture.querySelector('.comments-count').textContent = window.picsData[target.childNodes[1].id].comments.length;
       bigPicture.querySelector('.social__caption').textContent = window.picsData[target.childNodes[1].id].description;
-      renderComments((window.picsData[target.childNodes[1].id].comments).slice(0, window.constant.MAX_COMMENTS));
+      renderComments((window.picsData[target.childNodes[1].id].comments).slice(0, MAX_COMMENTS));
     }
   };
 
   var imagesContainer = document.querySelector('.pictures');
-  imagesContainer.addEventListener('click', onImageClick);
-  imagesContainer.addEventListener('keydown', onImageKey);
+  imagesContainer.addEventListener('click', imageClickHandler);
+  imagesContainer.addEventListener('keydown', imageKeydownHandler);
 })();
