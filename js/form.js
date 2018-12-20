@@ -1,5 +1,13 @@
 'use strict';
 (function () {
+  var MAX_DESCRIPTION_LENGTH = 140;
+  var MIN_SCALE_VALUE = 25;
+  var MAX_SCALE_VALUE = 100;
+  var JUMP_VALUE = 25;
+  var DEFAULT_SCALE = 100;
+  var DEFAULT_RIGHT = 453;
+  var LEFT_EDGE = 0;
+  var MAX_COUNT_HASHTAGS = 5;
 
   var HashtagLength = {
     MIN: 2,
@@ -10,39 +18,10 @@
   var uploadFile = document.querySelector('#upload-file');
 
   /**
-   * Поиск повторяющихся тегов
-   * @param {array} valuesArray Массив тегов
-   * @return {boolean} Наличие повторяющихся тегов
-   */
-  var sortArray = function (valuesArray) {
-    var isRepeatedValue = false;
-
-    for (var i = 0; i < valuesArray.length; i++) {
-      for (var j = i + 1; j < valuesArray.length; j++) {
-        if (valuesArray[i].toLowerCase() === valuesArray[j].toLowerCase()) {
-          isRepeatedValue = true;
-        }
-      }
-    }
-    return isRepeatedValue;
-  };
-  // почему-то eslint ругается на такую функцию (Expected to return a value at the end of function 'sortArray')
-
-  // var sortArray = function (valuesArray) {
-  //   for (var i = 0; i < valuesArray.length; i++) {
-  //     for (var j = i + 1; j < valuesArray.length; j++) {
-  //       if (valuesArray[i].toLowerCase() === valuesArray[j].toLowerCase()) {
-  //         return true;
-  //       }
-  //     }
-  //   }
-  // };
-
-  /**
    * Валидация хэш-тегов
    * @param {string} evt событие (ввод тегов)
    */
-  var checkValidityTag = function (evt) {
+  var textHashtagHandler = function (evt) {
     var target = evt.target;
     var stringTags = evt.target.value;
     var arrayTags = stringTags.split(' ');
@@ -62,11 +41,11 @@
         target.setCustomValidity('Длина хеш-тега должна быть не менее 2 символов');
         textHashtag.style.border = 'solid 2px red';
         return;
-      } else if (arrayTags.length > window.constant.MAX_COUNT_HASHTAGS) {
+      } else if (arrayTags.length > MAX_COUNT_HASHTAGS) {
         target.setCustomValidity('В форме должно быть не более 5 хеш-тегов');
         textHashtag.style.border = 'solid 2px red';
         return;
-      } else if (sortArray(arrayTags)) {
+      } else if (window.sortArray(arrayTags)) {
         target.setCustomValidity('Хеш-теги не должны повторяться');
         textHashtag.style.border = 'solid 2px red';
         return;
@@ -78,16 +57,16 @@
   };
 
   var textHashtag = document.querySelector('.text__hashtags');
-  textHashtag.addEventListener('input', checkValidityTag);
+  textHashtag.addEventListener('input', textHashtagHandler);
 
   /**
    * Валидация комментария
    * @param {string} evt событие (ввод комментария)
    */
-  var checkValidityDescription = function (evt) {
+  var textDescriptionHandler = function (evt) {
     var target = evt.target;
     var description = evt.target.value;
-    if (description.length > window.constant.MAX_DESCRIPTION_LENGTH) {
+    if (description.length > MAX_DESCRIPTION_LENGTH) {
       target.setCustomValidity('Длина комментария должна быть не более 140 символов');
       textDescription.style.border = 'solid 2px red';
       return;
@@ -98,14 +77,14 @@
   };
 
   var textDescription = document.querySelector('.text__description');
-  textDescription.addEventListener('input', checkValidityDescription);
+  textDescription.addEventListener('input', textDescriptionHandler);
 
   /**
    * Установка дефолтного значения зума
    */
   uploadFile.addEventListener('change', function () {
     img.classList.remove('hidden');
-    scaleControlValue.value = window.constant.DEFAULT_SCALE + '%';
+    scaleControlValue.value = DEFAULT_SCALE + '%';
   });
 
   var imgSlider = document.querySelector('.img-upload__effect-level ');
@@ -122,19 +101,19 @@
     imgUploadPreview.removeAttribute('style');
     imgSlider.classList.remove('hidden');
     setDefalutEffectLevel();
-    scaleControlValue.value = window.constant.DEFAULT_SCALE + '%';
-    scaleValue = window.constant.MAX_SCALE_VALUE;
+    scaleControlValue.value = DEFAULT_SCALE + '%';
+    scaleValue = MAX_SCALE_VALUE;
   };
 
-  var onPreviewClick = function (evt) {
+  var imgPreviewHandler = function (evt) {
     var target = evt.target;
     switch (true) {
       case target.classList.contains('effects__preview--none'):
         imgUploadPreview.className = 'effects__preview--none';
         imgUploadPreview.removeAttribute('style');
         imgSlider.classList.add('hidden');
-        scaleControlValue.value = window.constant.DEFAULT_SCALE + '%';
-        scaleValue = window.constant.MAX_SCALE_VALUE;
+        scaleControlValue.value = DEFAULT_SCALE + '%';
+        scaleValue = MAX_SCALE_VALUE;
         break;
       case target.classList.contains('effects__preview--chrome'):
         imgUploadPreview.className = 'effects__preview--chrome';
@@ -161,7 +140,7 @@
 
   var imgPreview = document.querySelectorAll('.effects__item');
   imgPreview.forEach(function (image) {
-    image.addEventListener('click', onPreviewClick);
+    image.addEventListener('click', imgPreviewHandler);
   });
 
   var imgUploadCancelButton = document.querySelector('.img-upload__cancel');
@@ -169,25 +148,24 @@
   /**
    * Закрытие большой фотографии, слайдера и снятие фильтра
    */
-  var hideUploadPicture = function () {
+  var uploadPictureHandler = function () {
     img.classList.add('hidden');
     imgUploadPreview.className = 'effects__preview--none';
+    imgUploadPreview.removeAttribute('style');
     imgSlider.classList.add('hidden');
   };
 
   /**
    * Закрытие загруженной фотографии по клику на кнопке "закрыть"
    */
-  imgUploadCancelButton.addEventListener('click', function () {
-    hideUploadPicture();
-  });
+  imgUploadCancelButton.addEventListener('click', uploadPictureHandler);
 
   /**
    * Закрытие загруженной фотографии по нажатию на ESC
    */
   document.addEventListener('keydown', function (evt) {
     if (evt.keyCode === window.constant.ESC_CODE && evt.target !== textHashtag && evt.target !== textDescription) {
-      hideUploadPicture();
+      uploadPictureHandler();
     }
   });
 
@@ -197,31 +175,31 @@
    * Уменьшение либо увеличение фотографии, в зависимости от нажатой кнопки
    * @param evt Событие (клик на кнопке +/-)
    */
-  var scaleValue = window.constant.MAX_SCALE_VALUE;
-  var onScaleClick = function (evt) {
+  var scaleValue = MAX_SCALE_VALUE;
+  var imgUploadScaleHandler = function (evt) {
     if (evt.target.classList.contains('scale__control--smaller')) {
-      scaleValue = scaleValue - window.constant.JUMP_VALUE;
-      if (scaleValue < window.constant.MIN_SCALE_VALUE) {
-        scaleValue = window.constant.MIN_SCALE_VALUE;
+      scaleValue = scaleValue - JUMP_VALUE;
+      if (scaleValue < MIN_SCALE_VALUE) {
+        scaleValue = MIN_SCALE_VALUE;
       }
     } else if (evt.target.classList.contains('scale__control--bigger')) {
-      scaleValue = scaleValue + window.constant.JUMP_VALUE;
-      if (scaleValue > window.constant.MAX_SCALE_VALUE) {
-        scaleValue = window.constant.MAX_SCALE_VALUE;
+      scaleValue = scaleValue + JUMP_VALUE;
+      if (scaleValue > MAX_SCALE_VALUE) {
+        scaleValue = MAX_SCALE_VALUE;
       }
     }
     setScaleValue();
   };
 
   var imgUploadScale = document.querySelector('.img-upload__scale');
-  imgUploadScale.addEventListener('click', onScaleClick);
+  imgUploadScale.addEventListener('click', imgUploadScaleHandler);
 
   /**
    * Формирование значения зума
    */
   var setScaleValue = function () {
     scaleControlValue.value = scaleValue + '%';
-    imgUploadPreview.style.transform = 'scale(' + scaleValue / window.constant.DEFAULT_SCALE + ')';
+    imgUploadPreview.style.transform = 'scale(' + scaleValue / DEFAULT_SCALE + ')';
   };
 
   var effectLevelValue = document.querySelector('.effect-level__value');
@@ -233,8 +211,8 @@
    * Установка слайдера и уровня фильтра по-умолчанию
    */
   var setDefalutEffectLevel = function () {
-    effectLevelPin.style.left = window.constant.DEFAULT_RIGHT + 'px';
-    effectLevelDepth.style.width = window.constant.DEFAULT_RIGHT + 'px';
+    effectLevelPin.style.left = DEFAULT_RIGHT + 'px';
+    effectLevelDepth.style.width = DEFAULT_RIGHT + 'px';
   };
 
   /**
@@ -268,8 +246,8 @@
 
       var rightEdge = effectLevelLine.offsetWidth;
 
-      if (newLeftCoord < window.constant.LEFT_EDGE) {
-        newLeftCoord = window.constant.LEFT_EDGE;
+      if (newLeftCoord < LEFT_EDGE) {
+        newLeftCoord = LEFT_EDGE;
       }
 
       if (newLeftCoord > rightEdge) {
@@ -322,18 +300,13 @@
     document.addEventListener('mouseup', mouseUpHandler);
   });
 
-  var form = document.querySelector('.img-upload__form');
-  form.addEventListener('submit', function (evt) {
-    window.backend.save(new FormData(form), function () {
-      img.classList.add('hidden');
-    });
-    evt.preventDefault();
-  });
   var templateStatus = function (status) {
     var template = document.querySelector('#' + status);
     var msg = template.content.querySelector('.' + status).cloneNode(true);
     var messageTitle = msg.querySelector('.' + status + '__title');
     var messageButton = msg.querySelector('.' + status + '__button');
+    var close = msg.querySelector('.' + status + '__inner');
+
     if (status === 'error') {
       messageTitle.textContent = 'Ошибка отправки данных';
     } else {
@@ -341,32 +314,32 @@
     }
     document.querySelector('main').appendChild(msg);
 
-    function closeElement(evt) {
+    var closeElementHandler = function (evt) {
       var elem = evt.target;
       if (elem.classList.contains(status + '__button') || evt.keyCode === window.constant.ESC_CODE || elem === msg) {
-        messageButton.removeEventListener('click', closeElement);
-        document.removeEventListener('click', closeElement);
-        document.removeEventListener('keyup', closeElement);
+        messageButton.removeEventListener('click', closeElementHandler);
+        document.removeEventListener('click', closeElementHandler);
+        document.removeEventListener('keyup', closeElementHandler);
         msg.removeEventListener('click', closeClickHandler);
         msg.parentElement.removeChild(msg);
       }
-    }
-    function closeClickHandler() {
-      messageButton.removeEventListener('click', closeElement);
-      document.removeEventListener('click', closeElement);
-      document.removeEventListener('keyup', closeElement);
+    };
+    var closeClickHandler = function () {
+      messageButton.removeEventListener('click', closeElementHandler);
+      document.removeEventListener('click', closeElementHandler);
+      document.removeEventListener('keyup', closeElementHandler);
       msg.removeEventListener('click', closeBlurHandler);
 
       msg.parentElement.removeChild(msg);
 
-    }
-    function closeBlurHandler() {
+    };
+    var closeBlurHandler = function () {
       close.addEventListener('focus', closeClickHandler);
-    }
+    };
     msg.addEventListener('click', closeBlurHandler);
-    messageButton.addEventListener('click', closeElement);
-    document.addEventListener('click', closeElement);
-    document.addEventListener('keyup', closeElement);
+    messageButton.addEventListener('click', closeElementHandler);
+    document.addEventListener('click', closeElementHandler);
+    document.addEventListener('keyup', closeElementHandler);
   };
 
   var onLoad = function () {
@@ -380,7 +353,9 @@
   var onError = function () {
     templateStatus('error');
   };
-  document.querySelector('.img-upload__form').addEventListener('submit', function (evt) {
+
+  var form = document.querySelector('.img-upload__form');
+  form.addEventListener('submit', function (evt) {
     window.backend.save(new FormData(form), onLoad, onError);
     img.classList.add('hidden');
     evt.preventDefault();
