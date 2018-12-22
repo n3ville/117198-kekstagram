@@ -65,7 +65,10 @@
     window.bodyTag.classList.remove('modal-open');
     commentsLoader.removeEventListener('click', showCommentsHandler);
   });
-
+  /**
+   * Показ большой фотографии
+   * @param {string} target фотография
+   */
   var showBigPicture = function (target) {
     bigPicture.setAttribute('tabindex', 0);
     bigPicture.focus();
@@ -79,9 +82,9 @@
     bigPicture.querySelector('.likes-count').textContent = window.picsData[target.id].likes;
     bigPicture.querySelector('.comments-count').textContent = window.picsData[target.id].comments.length;
     if (window.picsData[target.id].comments.length <= MAX_COMMENTS) {
-      bigPicture.querySelector('.comments-number').textContent = window.picsData[target.id].comments.length
+      bigPicture.querySelector('.comments-number').textContent = window.picsData[target.id].comments.length;
     } else {
-      bigPicture.querySelector('.comments-number').textContent = MAX_COMMENTS
+      bigPicture.querySelector('.comments-number').textContent = MAX_COMMENTS;
     }
     bigPicture.querySelector('.social__caption').textContent = window.picsData[target.id].description;
     window.arrayComments = window.picsData[target.id].comments.slice(0);
@@ -97,6 +100,9 @@
 
   };
 
+  /**
+   * Загрузка дополнительных комментариев
+   */
   var showCommentsHandler = function () {
     var commentsForRender = (window.arrayComments).splice(0, MAX_COMMENTS);
     window.offsetComments += commentsForRender.length;
@@ -120,7 +126,7 @@
 
   var commenCount = document.querySelector('.social__comment-count');
   var commentNumber = document.createElement('span');
-  commentNumber.className = "comments-number";
+  commentNumber.className = 'comments-number';
   commenCount.insertBefore(commentNumber, commenCount.firstChild);
 
   /**

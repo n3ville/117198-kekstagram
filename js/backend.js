@@ -42,6 +42,6 @@
   window.backend = {
     load: load,
     save: save,
-    imgFilters : imgFilters
+    imgFilters: imgFilters
   };
 })();
