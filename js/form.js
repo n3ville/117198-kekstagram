@@ -346,7 +346,7 @@
     document.addEventListener('mouseup', mouseUpHandler);
   });
 
-  var templateStatus = function (status) {
+  var setTemplateStatus = function (status) {
     var template = document.querySelector('#' + status);
     var msg = template.content.querySelector('.' + status).cloneNode(true);
     var messageTitle = msg.querySelector('.' + status + '__title');
@@ -389,7 +389,7 @@
   };
 
   var onLoad = function () {
-    templateStatus('success');
+    setTemplateStatus('success');
     img.classList.add('hidden');
     uploadFile.value = '';
     textHashtag.value = '';
@@ -397,7 +397,7 @@
   };
 
   var onError = function () {
-    templateStatus('error');
+    setTemplateStatus('error');
     uploadFile.value = '';
   };
 
