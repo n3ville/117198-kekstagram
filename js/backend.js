@@ -4,12 +4,14 @@
 
   var LOAD_URL = 'https://js.dump.academy/kekstagram/data';
   var UPLOAD_URL = 'https://js.dump.academy/kekstagram';
+  var imgFilters = document.querySelector('.img-filters');
 
   var configureXhr = function (xhr, onLoad, onError) {
     xhr.responseType = 'json';
     xhr.addEventListener('load', function () {
       if (xhr.status === window.constant.STATUS_OK) {
         onLoad(xhr.response);
+        imgFilters.classList.remove('img-filters--inactive');
       } else {
         onError('Ошибка: ' + xhr.status + ' ' + xhr.statusText);
       }
@@ -39,6 +41,7 @@
 
   window.backend = {
     load: load,
-    save: save
+    save: save,
+    imgFilters : imgFilters
   };
 })();

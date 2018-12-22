@@ -8,14 +8,24 @@
   var DEFAULT_RIGHT = 453;
   var LEFT_EDGE = 0;
   var MAX_COUNT_HASHTAGS = 5;
+  var DEFAULT_LEVEL_FILTER = 100;
 
   var HashtagLength = {
     MIN: 2,
     MAX: 20
   };
 
+  var bodyTag = document.body;
   var img = document.querySelector('.img-upload__overlay');
   var uploadFile = document.querySelector('#upload-file');
+
+  var imgUploadEffectLevel = document.querySelector('.img-upload__effect-level');
+  var effectLevelValue = imgUploadEffectLevel.querySelector('.effect-level__value');
+  var effectLevelLine = document.querySelector('.effect-level__line');
+  var effectLevelPin = document.querySelector('.effect-level__pin');
+  var effectLevelDepth = document.querySelector('.effect-level__depth');
+
+  effectLevelValue.value = DEFAULT_LEVEL_FILTER;
 
   /**
    * Валидация хэш-тегов
@@ -82,9 +92,36 @@
   /**
    * Установка дефолтного значения зума
    */
+
+  var preview = document.querySelector('.user-pic');
+
   uploadFile.addEventListener('change', function () {
+    var file = uploadFile.files[0];
+    var fileName = file.name.toLowerCase();
+    var matches = window.constant.FILE_TYPES.some(function (it) {
+      return fileName.endsWith(it);
+    });
+
+    if (matches) {
+      var reader = new FileReader();
+
+      reader.addEventListener('load', function () {
+        preview.src = reader.result;
+      });
+
+      reader.readAsDataURL(file);
+    }
+
     img.classList.remove('hidden');
+    imgSlider.classList.add('hidden');
+    bodyTag.classList.add('modal-open');
+    var inputList = document.querySelectorAll('.effects__radio');
+    inputList.forEach(function (effect) {
+      effect.checked = false;
+    });
+    inputList[0].checked = true;
     scaleControlValue.value = DEFAULT_SCALE + '%';
+    effectLevelValue.value = DEFAULT_LEVEL_FILTER;
   });
 
   var imgSlider = document.querySelector('.img-upload__effect-level ');
@@ -106,6 +143,7 @@
   };
 
   var imgPreviewHandler = function (evt) {
+    bodyTag.classList.add('modal-open');
     var target = evt.target;
     switch (true) {
       case target.classList.contains('effects__preview--none'):
@@ -150,9 +188,14 @@
    */
   var uploadPictureHandler = function () {
     img.classList.add('hidden');
+    bodyTag.classList.remove('modal-open');
     imgUploadPreview.className = 'effects__preview--none';
     imgUploadPreview.removeAttribute('style');
     imgSlider.classList.add('hidden');
+    setDefalutEffectLevel();
+    imgUploadSetting();
+    scaleControlValue.value = DEFAULT_SCALE + '%';
+    scaleValue = MAX_SCALE_VALUE;
   };
 
   /**
@@ -166,6 +209,14 @@
   document.addEventListener('keydown', function (evt) {
     if (evt.keyCode === window.constant.ESC_CODE && evt.target !== textHashtag && evt.target !== textDescription) {
       uploadPictureHandler();
+      uploadFile.value = '';
+      imgUploadPreview.className = 'effects__preview--none';
+      imgUploadPreview.removeAttribute('style');
+      imgSlider.classList.remove('hidden');
+      setDefalutEffectLevel();
+      imgUploadSetting();
+      scaleControlValue.value = DEFAULT_SCALE + '%';
+      scaleValue = MAX_SCALE_VALUE;
     }
   });
 
@@ -201,11 +252,6 @@
     scaleControlValue.value = scaleValue + '%';
     imgUploadPreview.style.transform = 'scale(' + scaleValue / DEFAULT_SCALE + ')';
   };
-
-  var effectLevelValue = document.querySelector('.effect-level__value');
-  var effectLevelLine = document.querySelector('.effect-level__line');
-  var effectLevelPin = document.querySelector('.effect-level__pin');
-  var effectLevelDepth = document.querySelector('.effect-level__depth');
 
   /**
    * Установка слайдера и уровня фильтра по-умолчанию
@@ -352,12 +398,20 @@
 
   var onError = function () {
     templateStatus('error');
+    uploadFile.value = '';
   };
 
   var form = document.querySelector('.img-upload__form');
   form.addEventListener('submit', function (evt) {
     window.backend.save(new FormData(form), onLoad, onError);
+    imgUploadPreview.className = 'effects__preview--none';
+    imgUploadPreview.removeAttribute('style');
     img.classList.add('hidden');
+    bodyTag.classList.remove('modal-open');
+    imgSlider.classList.remove('hidden');
+    setDefalutEffectLevel();
+    scaleControlValue.value = DEFAULT_SCALE + '%';
+    scaleValue = MAX_SCALE_VALUE;
     evt.preventDefault();
   });
 })();

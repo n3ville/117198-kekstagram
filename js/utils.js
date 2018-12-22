@@ -16,8 +16,6 @@
     return false;
   };
 
-  window.sortArray = sortArray;
-
   var lastTimeout;
   window.debounce = function (cb) {
     if (lastTimeout) {
@@ -25,5 +23,8 @@
     }
     lastTimeout = window.setTimeout(cb, window.constant.DEBOUNCE_INTERVAL);
   };
+
+  window.sortArray = sortArray;
+
 
 })();

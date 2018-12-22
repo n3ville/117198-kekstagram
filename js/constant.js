@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
 
   var STATUS_OK = 200;
   var TIMEOUT = 10000;
@@ -12,6 +13,7 @@
     TIMEOUT: TIMEOUT,
     ESC_CODE: ESC_CODE,
     ENTER_CODE: ENTER_CODE,
-    DEBOUNCE_INTERVAL: DEBOUNCE_INTERVAL
+    DEBOUNCE_INTERVAL: DEBOUNCE_INTERVAL,
+    FILE_TYPES: FILE_TYPES
   };
 })();

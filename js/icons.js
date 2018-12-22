@@ -14,7 +14,6 @@
     picture.querySelector('.picture__img').id = picData.id;
     picture.querySelector('.picture__likes').textContent = picData.likes;
     picture.querySelector('.picture__comments').textContent = picData.comments.length;
-    picture.setAttribute('tabindex', '0');
     return picture;
   };
 
@@ -67,9 +66,6 @@
 
   window.backend.load(onLoad, onError);
 
-  var imgFilters = document.querySelector('.img-filters');
-  imgFilters.classList.remove('img-filters--inactive');
-
   /**
    * Сортировка по кол-ву комментариев у фотографии
    * @param {array} pics массив объектов с фотографиями
@@ -104,7 +100,7 @@
     });
   };
 
-  var filterButton = imgFilters.querySelectorAll('.img-filters__button');
+  var filterButton = window.backend.imgFilters.querySelectorAll('.img-filters__button');
   filterButton.forEach(function (button) {
     button.addEventListener('click', filterClickHandler);
     button.classList.remove('img-filters__button--active');
@@ -112,7 +108,7 @@
 
 
   var selectedButton;
-  imgFilters.onclick = function (evt) {
+  window.backend.imgFilters.onclick = function (evt) {
     var target = evt.target;
 
     if (target.tagName !== 'BUTTON') {
